@@ -1,13 +1,17 @@
+/*
+Removing this in favor of Emotion styled
 .title {
   text-align: center;
-}
-
-th {
-  text-align: left;
 }
 
 input {
   width: 100%;
   font-size: x-large;
-  padding: 0.2rem;
+  padding: 0rem;
 }
+*/
+
+th {
+  text-align: left;
+}
+

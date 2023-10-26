@@ -3,7 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import './App.css';
-import pokemonlist from "./pokemon.json";
+import styled from '@emotion/styled';
 
 // Aside:
 // Ctrl+Alt+Down puts cursors on multiple lines
@@ -72,31 +72,52 @@ PokemonInfo.propTypes = {
   onSelect: PropTypes.func,
 };
 
+const Title = styled.h1`
+  text-align: center
+`;
+
+const TwoColumnLayout = styled.div`
+  display: grid;
+  grid-template-columns: 70% 30%;
+  column-gap: 1rem;
+}}
+`;
+
+const Container = styled.div`
+  margin: auto;
+  width: 800px;
+  padding-top: 1rem;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  font-size: x-large;
+  padding: 0rem;
+`;
 
 function App() {
   const [filter, setFilter] = React.useState("");
+  const [pokemonList, setPokemonList] = React.useState([]);
   const [selectedItem, setSelectedItem] = React.useState(null);
+  
+  // Runs a function in reaction to a change
+  // If you give it any values in the 2nd arg, it runs when that changes
+  // Otherwise, it runs once and never again
+  React.useEffect(() => {
+    fetch("http://localhost:3000/starting-react/pokemon.json")
+      .then(resp => resp.json())
+      .then(data => setPokemonList(data));
+  }, [])
+  
   return (
-    <div
-      style={{
-        margin: "auto",
-        width: 800,
-        paddingTop: "1rem",
-      }}
-      >
-      <h1 className="title">Pokemon Search</h1>
-      <input
+    <Container>
+      <Title>Pokemon Search</Title>
+      <Input
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
       
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '70% 30%',
-          columnGap: "1rem",
-        }}
-      >
+      <TwoColumnLayout>
         <table width="100%">
           <thead>
             <tr>
@@ -105,7 +126,7 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {pokemonlist
+            {pokemonList
               .filter((pokemonItem) => pokemonItem.name.english.toLowerCase().includes(filter))
               .slice(0, 20).map((pokemonItem) => (
               <PokemonRow 
@@ -116,13 +137,15 @@ function App() {
             ))}
           </tbody>
         </table>
-      </div>
-      <div>
+
+        <div>
         <h2>Selected:</h2>
           {!selectedItem && (<span> Nothing Selected</span>)}
           {selectedItem && <PokemonInfo {...selectedItem}/>}
-      </div>
-    </div>
+        </div>
+      </TwoColumnLayout>
+      
+    </Container>
   );
 }
 

@@ -1,5 +1,26 @@
 [
     {
+        "id": 0,
+        "name": {
+            "english": "I made this guy up",
+            "japanese": "FAKE japanese",
+            "chinese": "FAKE chinese",
+            "french": "Bagueeeette"
+        },
+        "type": [
+            "Baguette",
+            "FAKE"
+        ],
+        "base": {
+            "HP": 0,
+            "Attack": 0,
+            "Defense": 0,
+            "Sp. Attack": 0,
+            "Sp. Defense": 0,
+            "Speed": 0
+        }
+    },
+    {
         "id": 1,
         "name": {
             "english": "Bulbasaur",
