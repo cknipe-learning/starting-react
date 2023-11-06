@@ -5,6 +5,14 @@ import PropTypes from "prop-types";
 import './App.css';
 import styled from '@emotion/styled';
 
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
+import Button from '@mui/material/Button';
+
+
 // Aside:
 // Ctrl+Alt+Down puts cursors on multiple lines
 
@@ -17,9 +25,10 @@ const PokemonRow = ({ pokemon, onSelect }) => (
     <td>{pokemon.name.english}</td>
     <td>{pokemon.type.join(", ")}</td>
     <td>
-      <button 
+      <Button 
+        variant="contained"
         onClick={() => onSelect(pokemon)}
-      >Select!</button>
+      >Select!</Button>
     </td>
   </tr>
 );
@@ -95,6 +104,85 @@ const Input = styled.input`
   padding: 0rem;
 `;
 
+// OLD STYLE with class components instead of functional components
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      // Equivalent of the useState things
+      filter: "",
+      pokemonList: [],
+      selectedItem: null,
+    }
+  }
+  
+  // Do this isntead of React.useEffect()
+  componentDidMount() {
+    fetch("http://localhost:3000/starting-react/pokemon.json")
+        .then(resp => resp.json())
+        .then(pokemonList => this.setState({
+          ...this.state,
+          pokemonList
+        }));
+        /*
+        // Above is the same as this below, but in JavaScript ES6, it sets the keyname pokemonList to the value
+        .then(data => this.setState({
+          ...this.state,
+          pokemonList: data
+        }));
+        */
+  }
+
+  render() {
+    // return everything returned in App()
+    return (
+      <Container>
+        <Title>Pokemon Search</Title>
+        <Input
+          value={this.state.filter}
+          onChange={(e) => this.setState({
+            ...this.state,  // It takes an object, so spread to get the original object
+            filter: e.target.value
+          })}
+        />
+        
+        <TwoColumnLayout>
+          <table width="100%">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.pokemonList
+                .filter((pokemonItem) => pokemonItem.name.english.toLowerCase().includes(this.state.filter.toLowerCase()))
+                .slice(0, 20).map((pokemonItem) => (
+                <PokemonRow 
+                  pokemon={pokemonItem}
+                  key={pokemonItem.id}
+                  onSelect={(pokemonItem) => this.setState({
+                    ...this.state,
+                    selectedItem: pokemonItem
+                  })}
+                />
+              ))}
+            </tbody>
+          </table>
+  
+          <div>
+          <h2>Selected:</h2>
+            {!this.state.selectedItem && (<span> Nothing Selected</span>)}
+            {this.state.selectedItem && <PokemonInfo {...this.state.selectedItem}/>}
+          </div>
+        </TwoColumnLayout>
+        
+      </Container>
+    );
+  }
+}
+
+/*
 function App() {
   const [filter, setFilter] = React.useState("");
   const [pokemonList, setPokemonList] = React.useState([]);
@@ -127,7 +215,7 @@ function App() {
           </thead>
           <tbody>
             {pokemonList
-              .filter((pokemonItem) => pokemonItem.name.english.toLowerCase().includes(filter))
+              .filter((pokemonItem) => pokemonItem.name.english.toLowerCase().includes(filter.toLowercase()))
               .slice(0, 20).map((pokemonItem) => (
               <PokemonRow 
                 pokemon={pokemonItem}
@@ -148,5 +236,6 @@ function App() {
     </Container>
   );
 }
+*/
 
 export default App;
