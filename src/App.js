@@ -89,7 +89,6 @@ const TwoColumnLayout = styled.div`
   display: grid;
   grid-template-columns: 70% 30%;
   column-gap: 1rem;
-}}
 `;
 
 const Container = styled.div`
@@ -103,7 +102,64 @@ const Input = styled.input`
   font-size: x-large;
   padding: 0rem;
 `;
+  
+function App() {
+  const [filter, setFilter] = React.useState("");
+  const [pokemonList, setPokemonList] = React.useState([]);
+  const [selectedItem, setSelectedItem] = React.useState(null);
+  
+  // Runs a function in reaction to a change
+  // If you give it any values in the 2nd arg, it runs when that changes
+  // Otherwise, it runs once and never again
+  React.useEffect(() => {
+    fetch("http://localhost:3000/starting-react/pokemon.json")
+      .then(resp => resp.json())
+      .then(data => setPokemonList(data));
+  }, [])
+  
+  return (
+    <Container>
+      <Title>Pokemon Search</Title>
+      <Input
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+      />
+      
+      <TwoColumnLayout>
+        <table width="100%">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pokemonList
+              .filter((pokemonItem) => pokemonItem.name.english.toLowerCase().includes(filter.toLowerCase()))
+              .slice(0, 20).map((pokemonItem) => (
+              <PokemonRow 
+                pokemon={pokemonItem}
+                key={pokemonItem.id}
+                onSelect={(pokemonItem) => setSelectedItem(pokemonItem)}
+              />
+            ))}
+          </tbody>
+        </table>
 
+        <div>
+        <h2>Selected:</h2>
+          {!selectedItem && (<span> Nothing Selected</span>)}
+          {selectedItem && <PokemonInfo {...selectedItem}/>}
+        </div>
+      </TwoColumnLayout>
+      
+    </Container>
+  );
+}
+
+export default App;
+
+/*
 // OLD STYLE with class components instead of functional components
 class App extends React.Component {
   constructor(props) {
@@ -124,13 +180,12 @@ class App extends React.Component {
           ...this.state,
           pokemonList
         }));
-        /*
+        
         // Above is the same as this below, but in JavaScript ES6, it sets the keyname pokemonList to the value
-        .then(data => this.setState({
-          ...this.state,
-          pokemonList: data
-        }));
-        */
+        // .then(data => this.setState({
+        //   ...this.state,
+        //   pokemonList: data
+        // }));
   }
 
   render() {
@@ -181,61 +236,4 @@ class App extends React.Component {
     );
   }
 }
-
-/*
-function App() {
-  const [filter, setFilter] = React.useState("");
-  const [pokemonList, setPokemonList] = React.useState([]);
-  const [selectedItem, setSelectedItem] = React.useState(null);
-  
-  // Runs a function in reaction to a change
-  // If you give it any values in the 2nd arg, it runs when that changes
-  // Otherwise, it runs once and never again
-  React.useEffect(() => {
-    fetch("http://localhost:3000/starting-react/pokemon.json")
-      .then(resp => resp.json())
-      .then(data => setPokemonList(data));
-  }, [])
-  
-  return (
-    <Container>
-      <Title>Pokemon Search</Title>
-      <Input
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-      />
-      
-      <TwoColumnLayout>
-        <table width="100%">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pokemonList
-              .filter((pokemonItem) => pokemonItem.name.english.toLowerCase().includes(filter.toLowercase()))
-              .slice(0, 20).map((pokemonItem) => (
-              <PokemonRow 
-                pokemon={pokemonItem}
-                key={pokemonItem.id}
-                onSelect={(pokemonItem) => setSelectedItem(pokemonItem)}
-              />
-            ))}
-          </tbody>
-        </table>
-
-        <div>
-        <h2>Selected:</h2>
-          {!selectedItem && (<span> Nothing Selected</span>)}
-          {selectedItem && <PokemonInfo {...selectedItem}/>}
-        </div>
-      </TwoColumnLayout>
-      
-    </Container>
-  );
-}
 */
-
-export default App;
