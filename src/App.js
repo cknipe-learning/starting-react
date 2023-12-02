@@ -28,7 +28,7 @@ const PokemonRow = ({ pokemon, onSelect }) => (
       <Button 
         variant="contained"
         onClick={() => onSelect(pokemon)}
-      >Select!</Button>
+      >More info</Button>
     </td>
   </tr>
 );
